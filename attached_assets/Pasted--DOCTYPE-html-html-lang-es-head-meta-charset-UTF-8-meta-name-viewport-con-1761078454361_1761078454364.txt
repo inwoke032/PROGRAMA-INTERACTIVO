@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafío Python: Variables y Colecciones</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fc;
+        }
+        .code-area {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            resize: none;
+            line-height: 1.4;
+            min-height: 200px;
+        }
+        /* Estilo para el botón principal */
+        .check-btn, .section-btn {
+            background-color: #10b981; /* esmeralda 500 */
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+        .check-btn:hover, .section-btn:hover {
+            background-color: #059669; /* esmeralda 600 */
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+        }
+        .check-btn:active, .section-btn:active {
+            transform: translateY(1px);
+            box-shadow: none;
+        }
+        .section-btn {
+            background-color: #4f46e5; /* indigo 600 */
+            width: 100%;
+            padding: 1.5rem;
+            font-size: 1.25rem;
+        }
+        .section-btn:hover {
+            background-color: #4338ca; /* indigo 700 */
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto bg-white shadow-xl rounded-xl p-6 md:p-10">
+
+        <h1 class="text-3xl font-bold text-gray-800 mb-2 border-b pb-2">🐍 Desafío Python: Variables y Colecciones</h1>
+        <p class="text-gray-500 mb-6">Completa el código para que la variable `resultado` tenga el valor esperado.</p>
+
+        <!-- Contenedor principal para la vista (Inicio o Ejercicio) -->
+        <div id="main-content">
+            <!-- Contenido dinámico cargado por JavaScript -->
+        </div>
+
+    </div>
+
+    <script type="text/javascript">
+        // --- DATA DE EJERCICIOS Y SECCIONES ---
+        const EXERCISES_DATA = {};
+        // Nueva estructura de metadatos de sección
+        const SECTION_META = {
+            "variables": { title: "1. Variables Fundamentales", count: 100 },
+            "colecciones": { title: "2. Colecciones de Datos (Listas/Dicts)", count: 100 },
+            "bucles": { title: "3. Bucles y Condicionales (for/if/else)", count: 100 },
+            "funciones": { title: "4. Funciones (def, return, parámetros)", count: 100 } // NUEVA SECCIÓN
+        };
+
+        // Estado Global
+        let currentSection = null;
+        let currentExerciseIndex = 0;
+
+        // Función para generar ejercicios de Variables Fundamentales (EXISTENTE)
+        function generateVariableExercises() {
+            const exercises = [];
+            const min = 1;
+            const max = 50;
+            const total = 100;
+            let i = 0;
+
+            // Bloque 1: Enteros y Flotantes (70%)
+            for (; i < 70; i++) {
+                if (i % 2 === 0) { // Entero
+                    const a = Math.floor(Math.random() * (max - min + 1)) + min;
+                    const b = Math.floor(Math.random() * (max - min + 1)) + min;
+                    const op = ['+', '-', '*', '%', '//'][i % 5];
+                    let result;
+                    switch (op) {
+                        case '+': result = a + b; break; 
+                        case '-': result = a - b; break; 
+                        case '*': result = a * b; break; 
+                        case '%': result = a % b; break; 
+                        case '//': result = Math.floor(a / b); break; 
+                    }
+                    exercises.push({
+                        id: `int-${i}`,
+                        prompt_es: `Define dos variables (ej. 'a' y 'b') con ${a} y ${b}. Usa el operador ${op} y guarda el resultado en 'resultado'.`,
+                        starterCode: "", expectedResult: result, type: 'integer',
+                    });
+                } else { // Flotante
+                    const f1 = (Math.random() * 10 + 1).toFixed(2);
+                    const f2 = (Math.random() * 5 + 0.5).toFixed(2);
+                    const val1 = parseFloat(f1);
+                    const val2 = parseFloat(f2);
+                    const result = (val1 * val2).toFixed(2);
+                    exercises.push({
+                        id: `float-${i}`,
+                        prompt_es: `Define dos variables flotantes con ${f1} y ${f2}. Multiplícalos y guarda el resultado en 'resultado'.`,
+                        starterCode: "", expectedResult: result, type: 'float',
+                    });
+                }
+            }
+
+            // Bloque 2: Cadenas de Texto (30%)
+            const names = ["Ada", "Alan", "Grace", "Tim", "Guido"];
+            for (; i < total; i++) {
+                const name = names[i % names.length];
+                const num = Math.floor(Math.random() * 90) + 10;
+                if (i % 3 === 0) {
+                    exercises.push({
+                        id: `str-concat-${i}`,
+                        prompt_es: `Define 'nombre' como "${name}". Concaténalo con "Hola, " y asigna el resultado a 'resultado'.`,
+                        starterCode: "", expectedResult: `Hola, ${name}`, type: 'string',
+                    });
+                } else {
+                    exercises.push({
+                        id: `str-convert-${i}`,
+                        prompt_es: `Tienes el entero ${num}. Conviértelo a una cadena de texto (string) usando 'str()' y guarda el resultado en 'resultado'.`,
+                        starterCode: "", expectedResult: `${num}`, type: 'string',
+                    });
+                }
+            }
+            return exercises;
+        }
+
+        // Función para generar ejercicios de Colecciones de Datos (EXISTENTE)
+        function generateCollectionExercises() {
+            const exercises = [];
+            const total = 100;
+            let i = 0;
+            
+            // Listas (Lists): 50 ejercicios
+            const listMethods = ['append', 'pop', 'index'];
+            const elements = ["apple", "banana", 10, "cherry", 20, 30];
+
+            for (; i < 50; i++) {
+                const method = listMethods[i % listMethods.length];
+                const listName = 'my_list';
+                let initialList = elements.slice(0, 4); 
+                let expectedResult;
+                let prompt;
+
+                switch (method) {
+                    case 'append':
+                        const newItem = elements[4 + (i % 2)]; // 20 or 30
+                        prompt = `Crea una lista llamada '${listName}' con los elementos ${JSON.stringify(initialList)}. Añade el elemento '${newItem}' al final de la lista usando el método 'append()'. El valor de 'resultado' debe ser la lista final.`;
+                        initialList.push(newItem);
+                        expectedResult = JSON.stringify(initialList);
+                        break;
+                    case 'pop':
+                        prompt = `Crea una lista llamada '${listName}' con los elementos ${JSON.stringify(initialList)}. Elimina y guarda el ÚLTIMO elemento de la lista usando el método 'pop()' en la variable 'resultado'.`;
+                        expectedResult = initialList[initialList.length - 1]; // Pop devuelve el elemento
+                        break;
+                    case 'index':
+                        const target = initialList[i % 4];
+                        prompt = `Crea una lista llamada '${listName}' con los elementos ${JSON.stringify(initialList)}. Encuentra el índice (posición) de '${target}' usando el método 'index()' y guarda ese índice en 'resultado'.`;
+                        expectedResult = initialList.indexOf(target);
+                        break;
+                }
+
+                exercises.push({
+                    id: `list-${i}`,
+                    prompt_es: prompt,
+                    starterCode: "", expectedResult: expectedResult, type: 'string', // Usamos string para JSON
+                });
+            }
+
+            // Diccionarios (Dictionaries): 50 ejercicios
+            for (; i < total; i++) {
+                const dictName = 'user_info';
+                const initialDict = { 'name': 'Alice', 'age': 30, 'city': 'NY' };
+                let expectedResult;
+                let prompt;
+                
+                if (i % 3 === 0) { // Acceso
+                    const key = 'name';
+                    prompt = `Crea un diccionario llamado '${dictName}' con los pares clave-valor ${JSON.stringify(initialDict)}. Accede al valor de la clave '${key}' y guárdalo en 'resultado'.`;
+                    expectedResult = initialDict[key];
+                } else if (i % 3 === 1) { // Adición/Actualización
+                    const newKey = 'occupation';
+                    const newValue = 'Engineer';
+                    prompt = `Crea un diccionario llamado '${dictName}' con los pares clave-valor ${JSON.stringify(initialDict)}. Añade el par '${newKey}': '${newValue}' al diccionario. El valor de 'resultado' debe ser el diccionario completo convertido a string.`;
+                    initialDict[newKey] = newValue;
+                    expectedResult = JSON.stringify(initialDict);
+                } else { // Eliminación (usando pop)
+                    const keyToRemove = 'age';
+                    prompt = `Crea un diccionario llamado '${dictName}' con los pares clave-valor ${JSON.stringify(initialDict)}. Elimina la clave '${keyToRemove}' y su valor, guardando el valor eliminado en 'resultado' usando 'pop()'.`;
+                    expectedResult = initialDict[keyToRemove]; // pop devuelve el valor
+                }
+
+                exercises.push({
+                    id: `dict-${i}`,
+                    prompt_es: prompt,
+                    starterCode: "", expectedResult: expectedResult, type: 'string', 
+                });
+            }
+            return exercises;
+        }
+
+        // Función para generar ejercicios de Bucles y Condicionales (EXISTENTE)
+        function generateLoopAndConditionalExercises() {
+            const exercises = [];
+            const total = 100;
+            const dataSets = [
+                { name: 'numeros', values: [1, 5, 10, 20, 3, 7] },
+                { name: 'frutas', values: ['manzana', 'banana', 'kiwi', 'pera', 'uva'] },
+            ];
+
+            for (let i = 0; i < total; i++) {
+                const dataSet = dataSets[i % dataSets.length];
+                const listName = dataSet.name + '_list';
+                const initialList = dataSet.values;
+
+                if (i % 4 === 0) { // Suma condicional (Pares o Impares)
+                    const isEven = i % 8 === 0;
+                    let expectedResult = 0;
+                    for (const num of initialList.filter(n => typeof n === 'number')) {
+                        if (isEven && num % 2 === 0) expectedResult += num;
+                        if (!isEven && num % 2 !== 0) expectedResult += num;
+                    }
+
+                    exercises.push({
+                        id: `loop-sum-${i}`,
+                        prompt_es: `Dada la lista ${listName} = ${JSON.stringify(initialList)}, usa un bucle 'for' y una condición 'if' para sumar solo los números ${isEven ? 'pares' : 'impares'}. Guarda la suma total en 'resultado'.`,
+                        starterCode: `sum = 0
+# Bucle aquí
+resultado = sum`,
+                        expectedResult: expectedResult,
+                        type: 'integer',
+                    });
+                } else if (i % 4 === 1) { // Contador de elementos (por longitud o inicial)
+                    const targetLength = 5;
+                    let expectedResult = 0;
+                    for (const item of initialList) {
+                        if (typeof item === 'string' && item.length >= targetLength) expectedResult++;
+                    }
+
+                    exercises.push({
+                        id: `loop-count-${i}`,
+                        prompt_es: `Dada la lista ${listName} = ${JSON.stringify(initialList.filter(n => typeof n === 'string'))}, usa un bucle 'for' y un condicional para contar cuántas palabras tienen ${targetLength} o más letras. Guarda el conteo en 'resultado'.`,
+                        starterCode: `count = 0
+# Bucle aquí
+resultado = count`,
+                        expectedResult: expectedResult,
+                        type: 'integer',
+                    });
+                } else if (i % 4 === 2) { // Encontrar el mayor/menor
+                    const nums = [Math.floor(Math.random() * 50), Math.floor(Math.random() * 50), Math.floor(Math.random() * 50), 5, 99];
+                    const isMax = i % 8 === 2;
+                    const expectedResult = isMax ? Math.max(...nums) : Math.min(...nums);
+
+                    exercises.push({
+                        id: `loop-minmax-${i}`,
+                        prompt_es: `Dada la lista 'valores' = ${JSON.stringify(nums)}, usa un bucle para encontrar el valor ${isMax ? 'máximo' : 'mínimo'} de la lista y guárdalo en 'resultado'.`,
+                        starterCode: `valores = ${JSON.stringify(nums)}
+# Inicializa una variable con el primer valor
+# Bucle 'for' con 'if' para comparar
+resultado = # Tu variable aquí`,
+                        expectedResult: expectedResult,
+                        type: 'integer',
+                    });
+                } else { // Decisión simple if/else
+                    const num = Math.floor(Math.random() * 100) + 1;
+                    const isGreater = num > 50;
+                    const expectedResult = isGreater ? "Mayor que 50" : "Menor o igual a 50";
+                    
+                    exercises.push({
+                        id: `if-else-${i}`,
+                        prompt_es: `Dada la variable 'numero' = ${num}, usa una estructura 'if/else' para asignar a 'resultado' la cadena "Mayor que 50" si el número es mayor a 50, o "Menor o igual a 50" en caso contrario.`,
+                        starterCode: `numero = ${num}
+# Tu código condicional aquí`,
+                        expectedResult: expectedResult,
+                        type: 'string',
+                    });
+                }
+            }
+            return exercises;
+        }
+
+        // Función para generar ejercicios de Funciones (NUEVA)
+        function generateFunctionExercises() {
+            const exercises = [];
+            const total = 100;
+            const functionNames = ['sumar', 'multiplicar', 'saludar', 'es_par', 'obtener_largo'];
+
+            for (let i = 0; i < total; i++) {
+                const funcName = functionNames[i % functionNames.length];
+                let prompt, expectedResult, starterCode, type;
+
+                if (i % 3 === 0) { // Función simple con 2 argumentos y return numérico
+                    const a = Math.floor(Math.random() * 10) + 1;
+                    const b = Math.floor(Math.random() * 10) + 1;
+                    const result = a + b;
+                    
+                    prompt = `Define una función llamada '${funcName}' que tome dos parámetros, 'x' y 'y', y retorne la suma de ambos. Luego, llama a la función con los valores ${a} y ${b} y guarda el resultado en 'resultado'.`;
+                    expectedResult = result;
+                    starterCode = `def ${funcName}(x, y):
+    # Escribe tu código de retorno aquí
+
+# Llama a la función y asigna el resultado
+# resultado = ...`;
+                    type = 'integer';
+
+                } else if (i % 3 === 1) { // Función con 1 argumento y return de string
+                    const name = ['Ana', 'Leo', 'Max', 'Emi'][i % 4];
+                    const greeting = 'Hola';
+                    const result = `${greeting}, ${name}!`;
+
+                    prompt = `Define una función llamada '${funcName}' que tome un parámetro 'nombre' y retorne la cadena: "${greeting}, [nombre]!". Llama a la función con "${name}" y guarda el resultado en 'resultado'.`;
+                    expectedResult = result;
+                    starterCode = `def ${funcName}(nombre):
+    # Escribe tu código de retorno aquí
+
+# Llama a la función y asigna el resultado
+# resultado = ...`;
+                    type = 'string';
+
+                } else { // Función con condicional y return booleano/numérico
+                    const num = Math.floor(Math.random() * 20);
+                    const isEven = num % 2 === 0;
+                    const result = isEven;
+
+                    prompt = `Define una función llamada '${funcName}' que tome un parámetro 'n'. Dentro de la función, usa un condicional 'if/else' para retornar True si 'n' es par, y False si es impar. Llama a la función con ${num} y guarda el resultado en 'resultado'.`;
+                    expectedResult = result;
+                    starterCode = `def ${funcName}(n):
+    # Escribe tu condicional aquí
+
+# Llama a la función y asigna el resultado
+# resultado = ...`;
+                    type = 'boolean'; 
+                }
+
+                exercises.push({
+                    id: `func-${i}`,
+                    prompt_es: prompt,
+                    starterCode: starterCode,
+                    expectedResult: expectedResult,
+                    type: type,
+                });
+            }
+            return exercises;
+        }
+
+
+        // Generar y almacenar todos los ejercicios
+        EXERCISES_DATA.variables = generateVariableExercises();
+        EXERCISES_DATA.colecciones = generateCollectionExercises();
+        EXERCISES_DATA.bucles = generateLoopAndConditionalExercises(); 
+        EXERCISES_DATA.funciones = generateFunctionExercises(); // NUEVA GENERACIÓN
+        
+        // --- LÓGICA DE PERSISTENCIA LOCAL (localStorage) ---
+        const STORAGE_KEY_PREFIX = 'python_progress_';
+
+        function loadProgress(sectionKey) {
+            const savedIndex = localStorage.getItem(STORAGE_KEY_PREFIX + sectionKey);
+            currentExerciseIndex = savedIndex ? parseInt(savedIndex, 10) : 0;
+            console.log(`Progreso local cargado para ${sectionKey}:`, currentExerciseIndex);
+        }
+
+        function saveProgress() {
+            if (currentSection) {
+                localStorage.setItem(STORAGE_KEY_PREFIX + currentSection, currentExerciseIndex.toString());
+                console.log(`Progreso local guardado para ${currentSection}:`, currentExerciseIndex);
+            }
+        }
+        // --- FIN PERSISTENCIA LOCAL ---
+
+        // --- MANEJO DE VISTAS (SIN CAMBIOS EN HTML) ---
+
+        /**
+         * Muestra la vista de inicio con las secciones disponibles.
+         */
+        window.showHomeView = function() {
+            currentSection = null;
+            document.getElementById('main-content').innerHTML = `
+                <div class="space-y-6">
+                    <p class="text-xl font-semibold text-gray-700">Selecciona una sección para comenzar a practicar:</p>
+                    ${Object.keys(SECTION_META).map(key => `
+                        <button onclick="startSection('${key}')" class="section-btn text-white font-bold py-4 px-8 rounded-lg shadow-xl hover:shadow-2xl">
+                            ${SECTION_META[key].title} (${EXERCISES_DATA[key].length} Ejercicios)
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+        };
+
+        /**
+         * Inicia una sección específica.
+         */
+        window.startSection = function(sectionKey) {
+            currentSection = sectionKey;
+            loadProgress(currentSection);
+            renderExerciseView(); // Cambiar a la vista de ejercicio
+            window.displayExercise(); // Cargar el ejercicio actual
+        };
+
+        /**
+         * Renderiza la estructura de la vista de ejercicios (que es la vista anterior).
+         */
+        function renderExerciseView() {
+            document.getElementById('main-content').innerHTML = `
+                <!-- Barra de Navegación de Sección -->
+                <div class="flex justify-between items-center mb-6 border-b pb-4">
+                    <h2 class="text-2xl font-semibold text-indigo-700">${SECTION_META[currentSection].title}</h2>
+                    <button onclick="showHomeView()" class="text-sm font-medium text-indigo-500 hover:text-indigo-700 transition duration-150">
+                        ← Volver al Inicio
+                    </button>
+                </div>
+
+                <!-- Barra de Progreso -->
+                <div class="mb-6">
+                    <div id="progress-text" class="text-lg font-semibold text-gray-700 mb-2">Ejercicio 1 / ${SECTION_META[currentSection].count}</div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div id="progress-bar" class="bg-indigo-600 h-2.5 rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Panel de Ejercicio -->
+                <div class="bg-indigo-50 p-6 rounded-lg mb-6 border border-indigo-200">
+                    <h2 class="text-xl font-bold text-indigo-800 mb-3">Tarea:</h2>
+                    <p id="problem-prompt" class="text-gray-700 leading-relaxed">Cargando ejercicio...</p>
+                    
+                    <!-- CONTENEDOR OCULTO POR DEFECTO -->
+                    <div id="expected-result-container" class="mt-4 p-3 bg-indigo-100 border-l-4 border-indigo-400 text-indigo-700 rounded-r hidden">
+                        <span class="font-semibold">Valor esperado para \`resultado\`:</span> <code id="expected-result-display" class="font-mono"></code>
+                    </div>
+                </div>
+
+                <!-- Área de Código -->
+                <div class="mb-6">
+                    <label for="code-input" class="block text-lg font-medium text-gray-700 mb-2">Tu Código Python (Simulado):</label>
+                    <textarea id="code-input" class="code-area w-full focus:ring-indigo-500 focus:border-indigo-500 shadow-inner" placeholder="# Escribe tu código aquí..."></textarea>
+                </div>
+
+                <!-- Botón y Mensaje de Feedback -->
+                <div class="flex flex-col md:flex-row items-center justify-between">
+                    <button id="check-button" onclick="checkAnswer()" class="check-btn text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl w-full md:w-auto mb-4 md:mb-0">
+                        Comprobar Código
+                    </button>
+                    <div id="feedback-message" class="text-lg font-semibold p-3 rounded-lg w-full md:w-2/3 text-center transition duration-300">
+                        <!-- Los mensajes de feedback aparecerán aquí -->
+                    </div>
+                </div>
+            `;
+        }
+
+
+        // --- LÓGICA DE LA INTERFAZ Y EL EJERCICIO (ACTUALIZADA) ---
+
+        /**
+         * Muestra el ejercicio actual en la UI.
+         */
+        window.displayExercise = function() {
+            if (!currentSection) return;
+
+            const exercises = EXERCISES_DATA[currentSection];
+            const expectedContainer = document.getElementById('expected-result-container');
+            
+            if (currentExerciseIndex >= exercises.length) {
+                document.getElementById('problem-prompt').innerHTML = `¡Felicidades! Has completado todos los ejercicios de la sección **${SECTION_META[currentSection].title}**. <button onclick="showHomeView()" class="text-indigo-600 hover:underline font-bold">Vuelve al Inicio</button> para intentar otra sección.`;
+                document.getElementById('expected-result-display').textContent = "COMPLETADO";
+                document.getElementById('code-input').value = "";
+                document.getElementById('code-input').disabled = true;
+                document.getElementById('check-button').disabled = true;
+                expectedContainer.classList.remove('hidden'); 
+                updateProgressUI(exercises.length, exercises.length);
+                return;
+            }
+
+            const exercise = exercises[currentExerciseIndex];
+            document.getElementById('problem-prompt').textContent = exercise.prompt_es;
+            document.getElementById('code-input').value = exercise.starterCode; 
+            document.getElementById('code-input').disabled = false;
+            document.getElementById('check-button').disabled = false;
+            document.getElementById('feedback-message').textContent = "";
+            document.getElementById('feedback-message').className = "text-lg font-semibold p-3 rounded-lg w-full md:w-2/3 text-center transition duration-300";
+            
+            // OCULTAR EL RESULTADO AL CARGAR NUEVO EJERCICIO
+            expectedContainer.classList.add('hidden');
+            document.getElementById('expected-result-display').textContent = 'Oculto...'; 
+
+            updateProgressUI(currentExerciseIndex + 1, exercises.length);
+        }
+
+        /**
+         * Actualiza la barra de progreso y el texto.
+         */
+        function updateProgressUI(current, total) {
+            const percentage = (current / total) * 100;
+            document.getElementById('progress-text').textContent = `Ejercicio ${current} / ${total}`;
+            document.getElementById('progress-bar').style.width = `${percentage}%`;
+        }
+
+        /**
+         * Intenta ejecutar y evaluar el código del usuario.
+         */
+        window.checkAnswer = function() {
+            if (!currentSection) return; // No hacer nada si no hay sección activa
+
+            const exercises = EXERCISES_DATA[currentSection];
+            const code = document.getElementById('code-input').value;
+            const exercise = exercises[currentExerciseIndex];
+            const expected = exercise.expectedResult;
+            const feedbackElement = document.getElementById('feedback-message');
+            const expectedContainer = document.getElementById('expected-result-container');
+
+            let result;
+
+            // Ocultar la respuesta si estaba visible por un error anterior
+            expectedContainer.classList.add('hidden');
+            document.getElementById('expected-result-display').textContent = 'Oculto...';
+
+            try {
+                // --- SIMULACIÓN DE EJECUCIÓN PYTHON EN JS ---
+                const context = { resultado: undefined };
+                const lines = code.split('\n');
+                
+                // Mapeo de funciones definidas por el usuario (para la sección 4)
+                const definedFunctions = {};
+
+                // Estado de control
+                let conditionMet = true; 
+                let skipBlock = false; 
+                
+                // Función auxiliar para evaluar una expresión con el contexto actual
+                const evaluateExpression = (expr, ctx) => {
+                    let expression = expr;
+                    
+                    // 1. Sustituir variables existentes en la expresión
+                    expression = expression.replace(/(\w+)/g, (match, p1) => {
+                        if (p1 in ctx) {
+                            return JSON.stringify(ctx[p1]);
+                        }
+                        return match;
+                    });
+                    
+                    // 2. CORRECCIÓN: Reemplazar funciones de Python por las de JavaScript
+                    expression = expression.replace(/str\(/g, 'String(');
+                    expression = expression.replace(/int\(/g, 'parseInt(');
+                    expression = expression.replace(/float\(/g, 'parseFloat(');
+
+                    // 3. Manejar operaciones específicas de Python (módulo, división entera)
+                    if (expression.includes('%') || expression.includes('//')) {
+                        const parts = expression.match(/(\-?\d+\.?\d*)\s*(\/\/|%)\s*(\-?\d+\.?\d*)/);
+                        if (parts) {
+                            const num1 = parseFloat(parts[1]);
+                            const operator = parts[2];
+                            const num2 = parseFloat(parts[3]);
+                            if (operator === '//') {
+                                return Math.floor(num1 / num2);
+                            } else {
+                                return num1 % num2;
+                            }
+                        }
+                    }
+                    
+                    return eval(expression);
+                };
+                
+                // Función auxiliar para simular ejecución de un bloque (bucle, if, función)
+                const executeBlock = (blockLines, ctx, isFunction=false) => {
+                    for (const blockLine of blockLines) {
+                        const trimmedLine = blockLine.trim();
+                        if (!trimmedLine || trimmedLine.startsWith('#')) continue;
+
+                        const assignmentMatch = trimmedLine.match(/^(\w+)\s*=\s*(.*)/);
+                        const methodMatch = trimmedLine.match(/^(\w+)\s*\.\s*(\w+)\s*\((.*)\)/);
+                        const returnMatch = trimmedLine.match(/^return\s+(.*)/);
+
+                        if (isFunction && returnMatch) {
+                            // Si es una función y hay un "return", evalúa y devuelve
+                            return evaluateExpression(returnMatch[1], ctx);
+                        }
+                        
+                        // Si no es un return (o si no estamos en una función)
+                        if (assignmentMatch) {
+                            const varName = assignmentMatch[1];
+                            const expression = assignmentMatch[2];
+                            
+                            try {
+                                // Antes de evaluar, buscar llamadas a funciones definidas por el usuario
+                                const funcCallMatch = expression.match(/(\w+)\s*\((.*)\)/);
+                                if (funcCallMatch && funcCallMatch[1] in definedFunctions) {
+                                    const callName = funcCallMatch[1];
+                                    const callArgsString = funcCallMatch[2];
+                                    const funcMeta = definedFunctions[callName];
+                                    
+                                    // 1. Evaluar argumentos de la llamada
+                                    const argValues = callArgsString.split(',').map(arg => {
+                                        if (arg.trim().match(/^[0-9.]+$|^["'].*["']$/)) {
+                                            return eval(arg.trim());
+                                        } else {
+                                            return ctx[arg.trim()]; // Asume que el argumento es una variable
+                                        }
+                                    });
+
+                                    // 2. Crear contexto de función (mapear parámetros a valores)
+                                    const funcCtx = {};
+                                    if (funcMeta.params.length !== argValues.length) {
+                                        throw new Error(`La función '${callName}' fue llamada con ${argValues.length} argumentos, pero espera ${funcMeta.params.length}.`);
+                                    }
+                                    funcMeta.params.forEach((param, index) => {
+                                        funcCtx[param] = argValues[index];
+                                    });
+                                    
+                                    // 3. Ejecutar la función
+                                    const returnValue = executeBlock(funcMeta.body, funcCtx, true);
+
+                                    // 4. Reemplazar la llamada a función en la expresión con el valor retornado
+                                    const callRegex = new RegExp(`${callName}\\s*\\(.*\\)`);
+                                    expression = expression.replace(callRegex, JSON.stringify(returnValue));
+                                    
+                                }
+                                
+                                const evaluatedValue = evaluateExpression(expression, ctx);
+                                
+                                // Limpieza de strings y clonación de colecciones
+                                if (typeof evaluatedValue === 'string') {
+                                    ctx[varName] = evaluatedValue.replace(/^["']|["']$/g, '');
+                                } else if (typeof evaluatedValue === 'object' && evaluatedValue !== null) {
+                                    ctx[varName] = JSON.parse(JSON.stringify(evaluatedValue));
+                                } else {
+                                    ctx[varName] = evaluatedValue;
+                                }
+
+                            } catch (e) {
+                                throw new Error(`Error en la línea: ${trimmedLine}. Mensaje: ${e.message}`);
+                            }
+                        } else if (methodMatch) {
+                            // Manejo de métodos de lista/diccionario (Listas: append, pop, Diccionarios: pop)
+                            const varName = methodMatch[1];
+                            const method = methodMatch[2];
+                            let argsString = methodMatch[3].trim();
+                            
+                            if (!(varName in ctx)) {
+                                throw new Error(`La variable '${varName}' no ha sido definida.`);
+                            }
+                            
+                            let targetVar = ctx[varName];
+                            
+                            // Evaluar argumentos (ej. 'new_item' o 2)
+                            const args = argsString ? [evaluateExpression(argsString, ctx)] : [];
+
+                            try {
+                                if (Array.isArray(targetVar)) { // Es una lista
+                                    if (method === 'append') {
+                                        targetVar.push(args[0]);
+                                    } else if (method === 'pop') {
+                                        ctx.resultado = targetVar.pop(); 
+                                    } else if (method === 'index') {
+                                        ctx.resultado = targetVar.indexOf(args[0]);
+                                    } else {
+                                        throw new Error(`Método de Lista '${method}' no simulado.`);
+                                    }
+                                } else if (typeof targetVar === 'object' && targetVar !== null) { // Es un diccionario
+                                    if (method === 'pop') {
+                                        const key = String(args[0]).replace(/^["']|["']$/g, '');
+                                        if (key in targetVar) {
+                                            ctx.resultado = targetVar[key]; 
+                                            delete targetVar[key];
+                                        } else {
+                                            throw new Error(`Clave '${key}' no encontrada en el diccionario.`);
+                                        }
+                                    } else {
+                                        throw new Error(`Método de Diccionario '${method}' no simulado.`);
+                                    }
+                                }
+                            } catch (e) {
+                                throw new Error(`Error al ejecutar el método .${method}(): ${e.message}`);
+                            }
+                            ctx[varName] = targetVar; // Actualizar la variable modificada (importante para append)
+                        }
+                    }
+                    return undefined; // Si no hay return explícito
+                };
+
+                // --- FASE 1: Detección y Almacenamiento de Funciones ---
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    const funcMatch = line.match(/^def\s+(\w+)\s*\((.*)\):$/);
+
+                    if (funcMatch) {
+                        const funcName = funcMatch[1];
+                        const paramString = funcMatch[2].trim();
+                        const params = paramString ? paramString.split(',').map(p => p.trim()) : [];
+                        
+                        const funcBody = [];
+                        let j = i + 1;
+                        let funcIndent = -1;
+                        
+                        // Capturar el cuerpo de la función
+                        while (j < lines.length) {
+                            const nextLine = lines[j];
+                            const nextTrimmed = nextLine.trim();
+                            const nextIndent = nextLine.search(/\S|$/);
+
+                            if (nextTrimmed.startsWith('#')) {
+                                j++;
+                                continue;
+                            }
+                            
+                            if (funcIndent === -1) {
+                                funcIndent = nextIndent;
+                            }
+
+                            if (nextIndent >= funcIndent) {
+                                funcBody.push(nextLine);
+                            } else {
+                                break;
+                            }
+                            j++;
+                        }
+
+                        definedFunctions[funcName] = { params, body: funcBody };
+                        i = j - 1; // Saltar las líneas ya procesadas de la función
+                    }
+                }
+                
+                // --- FASE 2: Ejecución del Código Principal (Fuera de Funciones) ---
+                let currentBlock = [];
+                let isInsideBlock = false; 
+
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    const trimmedLine = line.trim();
+                    const indent = line.search(/\S|$/);
+                    
+                    const isCodeLine = trimmedLine && !trimmedLine.startsWith('#');
+
+                    // Saltar líneas de definición de función
+                    if (trimmedLine.match(/^def\s+/)) { continue; } 
+
+                    // Salida de bloque (IF/ELSE)
+                    if (isInsideBlock && indent === 0 && isCodeLine) {
+                        if (currentBlock.length > 0 && conditionMet && !skipBlock) {
+                            executeBlock(currentBlock, context);
+                        }
+                        currentBlock = [];
+                        isInsideBlock = false;
+                        skipBlock = false;
+                        conditionMet = true; 
+                        i--; 
+                        continue;
+                    }
+
+                    if (isInsideBlock) {
+                        currentBlock.push(line);
+                        continue;
+                    }
+
+                    // --- LÓGICA PRINCIPAL (Nivel de indentación 0) ---
+                    
+                    // 1. Detección de IF/ELIF/ELSE
+                    const ifMatch = trimmedLine.match(/^if\s+(.*):$/);
+                    const elifMatch = trimmedLine.match(/^elif\s+(.*):$/);
+                    const elseMatch = trimmedLine.match(/^else:$/);
+                    
+                    if (ifMatch) {
+                        isInsideBlock = true;
+                        conditionMet = evaluateExpression(ifMatch[1], context);
+                        skipBlock = !conditionMet;
+                    } else if (elifMatch) {
+                        isInsideBlock = true;
+                        if (!skipBlock) {
+                            conditionMet = evaluateExpression(elifMatch[1], context);
+                            skipBlock = !conditionMet;
+                        } else {
+                            conditionMet = false;
+                        }
+                    } else if (elseMatch) {
+                        isInsideBlock = true;
+                        conditionMet = !skipBlock;
+                        skipBlock = true; 
+                    }
+
+                    // 2. Detección de Bucle FOR
+                    const forMatch = trimmedLine.match(/^for\s+(\w+)\s+in\s+(\w+):$/);
+                    if (forMatch) {
+                        const iterVar = forMatch[1]; 
+                        const targetListVar = forMatch[2]; 
+                        
+                        if (!(targetListVar in context) || !Array.isArray(context[targetListVar])) {
+                            throw new Error(`La variable '${targetListVar}' no es una lista o no está definida para el bucle 'for'.`);
+                        }
+                        
+                        const listToIterate = context[targetListVar];
+                        
+                        // Capturar y ejecutar el cuerpo del bucle (lógica simplificada, no soporta anidamiento fácil)
+                        const loopBody = [];
+                        let j = i + 1;
+                        let loopIndent = -1;
+                        while (j < lines.length) {
+                            const nextLine = lines[j];
+                            const nextTrimmed = nextLine.trim();
+                            const nextIndent = nextLine.search(/\S|$/);
+
+                            if (nextTrimmed.startsWith('#')) {
+                                j++;
+                                continue;
+                            }
+                            
+                            if (loopIndent === -1) {
+                                loopIndent = nextIndent;
+                            }
+
+                            if (nextIndent >= loopIndent) {
+                                loopBody.push(nextLine);
+                            } else {
+                                break;
+                            }
+                            j++;
+                        }
+                        
+                        // Ejecutar el bucle
+                        for (const item of listToIterate) {
+                            const iterationContext = Object.assign({}, context);
+                            iterationContext[iterVar] = item;
+                            
+                            executeBlock(loopBody, iterationContext);
+
+                            context.resultado = iterationContext.resultado;
+                        }
+                        
+                        i = j - 1; 
+                        continue;
+                    }
+
+                    // 3. Asignación y métodos (Fuera de cualquier bloque)
+                    if (!ifMatch && !elifMatch && !elseMatch && !trimmedLine.match(/^def\s+/)) {
+                        executeBlock([line], context);
+                    }
+                }
+
+                // Asegurarse de ejecutar el último bloque si el código termina dentro de un bloque
+                if (isInsideBlock && currentBlock.length > 0) {
+                     if (conditionMet && !skipBlock) {
+                        executeBlock(currentBlock, context);
+                    }
+                }
+
+
+                // 2. Formatear el resultado para comparación
+                result = context.resultado;
+
+                let formattedResult;
+                if (exercise.type === 'float') {
+                    formattedResult = result !== undefined && result !== null ? parseFloat(result).toFixed(2) : undefined;
+                } else if (exercise.type === 'integer') {
+                     formattedResult = result !== undefined && result !== null ? parseInt(result, 10) : undefined;
+                } else if (exercise.type === 'boolean') {
+                    formattedResult = result === true || result === 'True' || result === 1 ? true : (result === false || result === 'False' || result === 0 ? false : undefined);
+                } else if (exercise.type === 'string') {
+                    if (Array.isArray(result) || (typeof result === 'object' && result !== null)) {
+                        formattedResult = JSON.stringify(result);
+                    } else {
+                        formattedResult = String(result).replace(/^["']|["']$/g, '');
+                    }
+                } else {
+                    formattedResult = result;
+                }
+                
+                // 3. Comparación
+                const expectedValue = exercise.type === 'float' ? parseFloat(expected).toFixed(2) : expected;
+
+                let isCorrect;
+                if (exercise.type === 'boolean') {
+                    // Comparación estricta para booleanos
+                    isCorrect = formattedResult === expectedValue; 
+                } else if (exercise.type === 'string') {
+                    isCorrect = formattedResult === String(expectedValue);
+                } else {
+                    isCorrect = formattedResult == expectedValue;
+                }
+
+                if (isCorrect) {
+                    feedbackElement.textContent = "¡Correcto! ¡Avanzando al siguiente ejercicio!";
+                    feedbackElement.className = "text-lg font-semibold p-3 rounded-lg w-full md:w-2/3 text-center bg-green-100 text-green-700 transition duration-300";
+
+                    currentExerciseIndex++;
+                    saveProgress(); 
+                    setTimeout(window.displayExercise, 1500);
+                } else {
+                    // --- REVELAR LA RESPUESTA EN EL MENSAJE DE ERROR ---
+                    document.getElementById('expected-result-display').textContent = expected; 
+                    expectedContainer.classList.remove('hidden'); 
+                    // --- FIN REVELACIÓN ---
+                    
+                    feedbackElement.textContent = `Incorrecto. Tu valor de 'resultado' fue ${JSON.stringify(formattedResult)}. ¡Revisa la pista de arriba y vuelve a intentarlo!`;
+                    feedbackElement.className = "text-lg font-semibold p-3 rounded-lg w-full md:w-2/3 text-center bg-red-100 text-red-700 transition duration-300";
+                }
+
+            } catch (error) {
+                feedbackElement.textContent = `Error de sintaxis o ejecución: ${error.message}`;
+                feedbackElement.className = "text-lg font-semibold p-3 rounded-lg w-full md:w-2/3 text-center bg-yellow-100 text-yellow-800 transition duration-300";
+                console.error("Error de simulación:", error);
+            }
+        };
+
+
+        // --- INICIALIZACIÓN FINAL ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Cargar y mostrar la vista de inicio al principio
+            window.showHomeView();
+        });
+    </script>
+</body>
+</html>
